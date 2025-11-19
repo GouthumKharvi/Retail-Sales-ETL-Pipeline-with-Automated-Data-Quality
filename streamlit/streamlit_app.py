@@ -1230,43 +1230,50 @@ with tabs[3]:
         """, unsafe_allow_html=True)
 
     else:
-        engine = None
-        try:
-            # try to create engine (get_db_engine already displays a friendly error on exception)
-            engine = get_db_engine(config)
-            if engine:
-                with engine.connect() as conn:
-                    conn.execute(text("SELECT 1"))
-                st.success("✅ Successfully connected to database!")
-            else:
-                st.warning("Database engine creation failed — database features will be disabled.")
+    # Cloud safety skip
+    if IS_CLOUD:
+        st.error("⚠️ Database disabled on Streamlit Cloud")
+        st.info("Streamlit Cloud cannot access your local MySQL (127.0.0.1).")
+        st.stop()
+
+    engine = None
+    try:
+        # try to create engine (get_db_engine already displays a friendly error on exception)
+        engine = get_db_engine(config)
+        if engine:
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            st.success("✅ Successfully connected to database!")
+        else:
+            st.warning("Database engine creation failed — database features will be disabled.")
+        
+        # Database info
+        if engine:
+            col1, col2, col3 = st.columns(3)
             
-            # Database info
-            if engine:
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.markdown(display_metric_card(
-                        "Database Host",
-                        config.get("host", "localhost"),
-                        color="blue"
-                    ), unsafe_allow_html=True)
-                
-                with col2:
-                    st.markdown(display_metric_card(
-                        "Database Name",
-                        config.get("database", "N/A"),
-                        color="green"
-                    ), unsafe_allow_html=True)
-                
-                with col3:
-                    st.markdown(display_metric_card(
-                        "Port",
-                        str(config.get("port", 3306)),
-                        color="purple"
-                    ), unsafe_allow_html=True)
-                
-                st.markdown("---")
+            with col1:
+                st.markdown(display_metric_card(
+                    "Database Host",
+                    config.get("host", "localhost"),
+                    color="blue"
+                ), unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(display_metric_card(
+                    "Database Name",
+                    config.get("database", "N/A"),
+                    color="green"
+                ), unsafe_allow_html=True)
+            
+            with col3:
+                st.markdown(display_metric_card(
+                    "Port",
+                    str(config.get("port", 3306)),
+                    color="purple"
+                ), unsafe_allow_html=True)
+            
+            st.markdown("---")
+
             
         except Exception as e:
             # Show a cleaned error message for connection failures
