@@ -24,6 +24,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+
+# ADD THIS LINE BELOW ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+IS_CLOUD = "STREAMLIT_RUNTIME" in os.environ
+# ADD THIS LINE ABOVE ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
 # ---------------------------
 # PATCH: Force Plotly to use an iframe renderer to avoid
 # "Failed to fetch dynamically imported module" errors on Streamlit Cloud
