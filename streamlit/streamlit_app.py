@@ -1229,7 +1229,7 @@ with tabs[3]:
         </div>
         """, unsafe_allow_html=True)
 
-    else:
+else:
     # Cloud safety skip
     if IS_CLOUD:
         st.error("⚠️ Database disabled on Streamlit Cloud")
