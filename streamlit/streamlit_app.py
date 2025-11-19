@@ -25,6 +25,15 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 # ---------------------------
+# PATCH: Force Plotly to use an iframe renderer to avoid
+# "Failed to fetch dynamically imported module" errors on Streamlit Cloud
+# (this addresses the reported TypeError)
+# ---------------------------
+import plotly.io as pio
+# Use iframe renderer for safer embedding (works in Streamlit where module fetch can fail)
+pio.renderers.default = "iframe"
+
+# ---------------------------
 # Project paths (relative)
 # ---------------------------
 HERE = Path(__file__).resolve().parent
@@ -313,7 +322,8 @@ def load_custom_css():
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         padding: 20px;
         border-radius: 12px;
-        color: white;
+        /* ensure contrast: force text white for gradient backgrounds */
+        color: white !important;
         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         margin: 10px 0;
         transition: all 0.3s ease;
@@ -326,15 +336,28 @@ def load_custom_css():
     
     .tech-card h4 {
         margin: 0 0 10px 0;
-        color: white;
+        color: white !important;
     }
     
     .tech-card p {
         margin: 5px 0;
         opacity: 0.95;
-        color: white;
+        color: white !important;
     }
 
+    /* Ensure code/pre blocks inside cards have dark text on light backgrounds */
+    .tech-card pre, .tech-card code {
+        color: #fff !important;
+        background: rgba(0,0,0,0.12) !important;
+    }
+
+    /* Safe styling for inline white text on light backgrounds - fallback */
+    .white-text-safe { color: #ffffff !important; text-shadow: 0 1px 0 rgba(0,0,0,0.45); }
+
+    /* Fix for cards that use white bg: enforce dark text */
+    .info-card.white-bg, .info-card[style*="background: white"] {
+        color: #111 !important;
+    }
     
     </style>
     """, unsafe_allow_html=True)
@@ -405,7 +428,10 @@ def get_db_engine(cfg: dict):
         engine = create_engine(uri, pool_recycle=3600)
         return engine
     except Exception as e:
-        st.error(f"Failed to create DB engine: {e}")
+        # More user-friendly error - don't show the long SQLAlchemy background URL.
+        err_str = str(e)
+        err_str_clean = err_str.split(' (Background')[0]
+        st.error(f"Failed to create DB engine: {err_str_clean}")
         return None
 
 def calculate_data_quality_score(df):
@@ -521,6 +547,7 @@ if st.sidebar.button("🚀 Run Full ETL Pipeline", use_container_width=True):
             st.balloons()
         else:
             status_text.text("❌ Pipeline failed")
+            # sanitize stderr/rc info
             st.sidebar.error(f"ETL pipeline failed (code {rc})")
         
         if stdout:
@@ -645,12 +672,20 @@ with tabs[0]:
     
     with col4:
         if full_df is not None:
-            total_sales = full_df['weekly_sales'].sum()
-            st.markdown(display_metric_card(
-                "Total Revenue",
-                f"${total_sales/1e6:.2f}M",
-                color="orange"
-            ), unsafe_allow_html=True)
+            # protect if weekly_sales missing column
+            if 'weekly_sales' in full_df.columns:
+                total_sales = full_df['weekly_sales'].sum()
+                st.markdown(display_metric_card(
+                    "Total Revenue",
+                    f"${total_sales/1e6:.2f}M",
+                    color="orange"
+                ), unsafe_allow_html=True)
+            else:
+                st.markdown(display_metric_card(
+                    "Total Revenue",
+                    "N/A",
+                    color="red"
+                ), unsafe_allow_html=True)
         else:
             st.markdown(display_metric_card(
                 "Total Revenue",
@@ -739,9 +774,13 @@ with tabs[1]:
     if full_df is None:
         st.warning("⚠️ No data available. Run the ETL pipeline first.")
     else:
-        # Convert dates
-        if not np.issubdtype(full_df["sale_date"].dtype, np.datetime64):
-            full_df["sale_date"] = pd.to_datetime(full_df["sale_date"], errors="coerce")
+        # Convert dates safely
+        if 'sale_date' in full_df.columns:
+            if not np.issubdtype(full_df["sale_date"].dtype, np.datetime64):
+                full_df["sale_date"] = pd.to_datetime(full_df["sale_date"], errors="coerce")
+        else:
+            # add placeholder column to avoid crashing visual code paths
+            full_df['sale_date'] = pd.to_datetime(pd.Series([None]*len(full_df)))
         
         # Time Series Analysis
         st.markdown("#### 📅 Time Series Analysis")
@@ -749,7 +788,11 @@ with tabs[1]:
         col1, col2 = st.columns([2, 1])
         
         with col2:
-            stores = sorted(full_df["store"].unique().tolist())
+            # protect unique stores
+            if 'store' in full_df.columns:
+                stores = sorted(full_df["store"].fillna("Unknown").unique().tolist())
+            else:
+                stores = ["Unknown"]
             selected_store = st.selectbox("🏪 Select Store:", stores, index=0)
             
             time_range = st.select_slider(
@@ -765,15 +808,15 @@ with tabs[1]:
             )
         
         with col1:
-            store_df = full_df[full_df["store"] == selected_store].sort_values("sale_date")
+            store_df = full_df[full_df.get("store", "Unknown") == selected_store].sort_values("sale_date")
             
             # Apply time range filter
-            if time_range != "All Time":
+            if time_range != "All Time" and not store_df.empty:
                 days_map = {"1 Month": 30, "3 Months": 90, "6 Months": 180, "1 Year": 365}
                 cutoff_date = store_df["sale_date"].max() - timedelta(days=days_map[time_range])
                 store_df = store_df[store_df["sale_date"] >= cutoff_date]
             
-            if not store_df.empty:
+            if not store_df.empty and 'weekly_sales' in store_df.columns:
                 # Convert to native Python types
                 store_df = store_df.copy()
                 store_df['weekly_sales'] = store_df['weekly_sales'].astype(float)
@@ -806,15 +849,18 @@ with tabs[1]:
                         marker_color='#667eea'
                     ))
                 
-                # Add moving average
-                ma = store_df.set_index("sale_date")["weekly_sales"].rolling(window=4).mean()
-                fig.add_trace(go.Scatter(
-                    x=ma.index.tolist(),
-                    y=ma.values.tolist(),
-                    mode='lines',
-                    name='4-Week Moving Avg',
-                    line=dict(color='#ff7f0e', width=2, dash='dash')
-                ))
+                # Add moving average safely
+                try:
+                    ma = store_df.set_index("sale_date")["weekly_sales"].rolling(window=4).mean()
+                    fig.add_trace(go.Scatter(
+                        x=ma.index.tolist(),
+                        y=ma.values.tolist(),
+                        mode='lines',
+                        name='4-Week Moving Avg',
+                        line=dict(color='#ff7f0e', width=2, dash='dash')
+                    ))
+                except Exception:
+                    pass
                 
                 fig.update_layout(
                     title=f"Store {selected_store} - Sales Trend",
@@ -836,42 +882,48 @@ with tabs[1]:
         col1, col2 = st.columns(2)
         
         with col1:
-            # Top performing stores
-            top_stores = full_df.groupby("store", as_index=False)["weekly_sales"].agg([
-                ('total_sales', 'sum'),
-                ('avg_sales', 'mean'),
-                ('max_sales', 'max')
-            ]).reset_index()
-            top_stores = top_stores.sort_values('total_sales', ascending=False).head(10)
-            
-            # Convert to native Python types
-            top_stores['store'] = top_stores['store'].astype(str)
-            top_stores['total_sales'] = top_stores['total_sales'].astype(float)
-            
-            fig = px.bar(
-                top_stores,
-                x='store',
-                y='total_sales',
-                title='Top 10 Stores by Total Sales',
-                color='total_sales',
-                color_continuous_scale='Blues'
-            )
-            fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+            # Top performing stores (protect missing columns)
+            if 'store' in full_df.columns and 'weekly_sales' in full_df.columns:
+                top_stores = full_df.groupby("store", as_index=False)["weekly_sales"].agg([
+                    ('total_sales', 'sum'),
+                    ('avg_sales', 'mean'),
+                    ('max_sales', 'max')
+                ]).reset_index()
+                top_stores = top_stores.sort_values('total_sales', ascending=False).head(10)
+                
+                # Convert to native Python types
+                top_stores['store'] = top_stores['store'].astype(str)
+                top_stores['total_sales'] = top_stores['total_sales'].astype(float)
+                
+                fig = px.bar(
+                    top_stores,
+                    x='store',
+                    y='total_sales',
+                    title='Top 10 Stores by Total Sales',
+                    color='total_sales',
+                    color_continuous_scale='Blues'
+                )
+                fig.update_layout(height=400)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Not enough data to compute top stores.")
         
         with col2:
             # Sales distribution - sample for performance
-            sample_df = full_df.head(10000).copy()
-            sample_df['weekly_sales'] = sample_df['weekly_sales'].astype(float)
-            
-            fig = px.box(
-                sample_df,
-                y='weekly_sales',
-                title='Sales Distribution Across All Stores',
-                color_discrete_sequence=['#667eea']
-            )
-            fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+            if 'weekly_sales' in full_df.columns:
+                sample_df = full_df.head(10000).copy()
+                sample_df['weekly_sales'] = sample_df['weekly_sales'].astype(float)
+                
+                fig = px.box(
+                    sample_df,
+                    y='weekly_sales',
+                    title='Sales Distribution Across All Stores',
+                    color_discrete_sequence=['#667eea']
+                )
+                fig.update_layout(height=400)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("No 'weekly_sales' column available for distribution plot.")
         
         st.markdown("---")
         
@@ -896,11 +948,13 @@ with tabs[1]:
             )
             fig.update_layout(height=600)
             st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Not enough numeric features to compute correlation.")
         
         st.markdown("---")
         
         # Seasonal Analysis
-        if 'sale_date' in full_df.columns:
+        if 'sale_date' in full_df.columns and 'weekly_sales' in full_df.columns:
             st.markdown("#### 📆 Seasonal Analysis")
             
             full_df['month'] = pd.to_datetime(full_df['sale_date']).dt.month
@@ -940,6 +994,8 @@ with tabs[1]:
                 )
                 fig.update_layout(height=350)
                 st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Seasonal analysis requires 'sale_date' and 'weekly_sales' columns.")
 
 # ---------------------------
 # Data Quality Tab
@@ -979,63 +1035,66 @@ with tabs[2]:
                     "Status": "✅" if score >= 80 else "⚠️" if score >= 60 else "❌"
                 })
         
-        quality_df = pd.DataFrame(quality_data)
+        quality_df = pd.DataFrame(quality_data) if quality_data else pd.DataFrame([])
         
         # Display quality metrics
-        col1, col2, col3, col4 = st.columns(4)
-        
-        avg_score = quality_df["Quality Score"].mean()
-        total_missing = quality_df["Missing Values"].sum()
-        total_duplicates = quality_df["Duplicates"].sum()
-        total_rows = quality_df["Rows"].sum()
-        
-        with col1:
-            st.markdown(display_metric_card(
-                "Average Quality Score",
-                f"{avg_score:.1f}%",
-                color="purple"
-            ), unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown(display_metric_card(
-                "Total Missing Values",
-                f"{total_missing:,}",
-                color="orange"
-            ), unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown(display_metric_card(
-                "Total Duplicates",
-                f"{total_duplicates:,}",
-                color="red"
-            ), unsafe_allow_html=True)
-        
-        with col4:
-            st.markdown(display_metric_card(
-                "Total Records",
-                f"{total_rows:,}",
-                color="green"
-            ), unsafe_allow_html=True)
-        
-        st.markdown("---")
-        
-        # Detailed quality table
-        st.markdown("#### 📋 Detailed Quality Report")
-        
-        # Style the dataframe
-        styled_df = quality_df.style.background_gradient(
-            subset=['Quality Score'],
-            cmap='RdYlGn',
-            vmin=0,
-            vmax=100
-        ).format({
-            'Quality Score': '{:.2f}%',
-            'Rows': '{:,}',
-            'Missing Values': '{:,}',
-            'Duplicates': '{:,}'
-        })
-        
-        st.dataframe(styled_df, use_container_width=True)
+        if not quality_df.empty:
+            col1, col2, col3, col4 = st.columns(4)
+            
+            avg_score = quality_df["Quality Score"].mean()
+            total_missing = quality_df["Missing Values"].sum()
+            total_duplicates = quality_df["Duplicates"].sum()
+            total_rows = quality_df["Rows"].sum()
+            
+            with col1:
+                st.markdown(display_metric_card(
+                    "Average Quality Score",
+                    f"{avg_score:.1f}%",
+                    color="purple"
+                ), unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(display_metric_card(
+                    "Total Missing Values",
+                    f"{total_missing:,}",
+                    color="orange"
+                ), unsafe_allow_html=True)
+            
+            with col3:
+                st.markdown(display_metric_card(
+                    "Total Duplicates",
+                    f"{total_duplicates:,}",
+                    color="red"
+                ), unsafe_allow_html=True)
+            
+            with col4:
+                st.markdown(display_metric_card(
+                    "Total Records",
+                    f"{total_rows:,}",
+                    color="green"
+                ), unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # Detailed quality table
+            st.markdown("#### 📋 Detailed Quality Report")
+            
+            # Style the dataframe
+            styled_df = quality_df.style.background_gradient(
+                subset=['Quality Score'],
+                cmap='RdYlGn',
+                vmin=0,
+                vmax=100
+            ).format({
+                'Quality Score': '{:.2f}%',
+                'Rows': '{:,}',
+                'Missing Values': '{:,}',
+                'Duplicates': '{:,}'
+            })
+            
+            st.dataframe(styled_df, use_container_width=True)
+        else:
+            st.info("No datasets available to compute quality metrics.")
         
         st.markdown("---")
         
@@ -1110,6 +1169,8 @@ with tabs[2]:
             )
             fig.update_layout(height=400)
             st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Full dataset not available for data type distribution.")
         
         st.markdown("---")
         
@@ -1131,6 +1192,8 @@ with tabs[2]:
                 file_name=f"data_quality_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                 mime="text/csv",
             )
+        else:
+            st.info("No full dataset to produce statistical summary.")
 
 # ---------------------------
 # Database Tab
@@ -1157,40 +1220,47 @@ with tabs[3]:
     else:
         engine = None
         try:
+            # try to create engine (get_db_engine already displays a friendly error on exception)
             engine = get_db_engine(config)
-            with engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
-            
-            st.success("✅ Successfully connected to database!")
+            if engine:
+                with engine.connect() as conn:
+                    conn.execute(text("SELECT 1"))
+                st.success("✅ Successfully connected to database!")
+            else:
+                st.warning("Database engine creation failed — database features will be disabled.")
             
             # Database info
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.markdown(display_metric_card(
-                    "Database Host",
-                    config.get("host", "localhost"),
-                    color="blue"
-                ), unsafe_allow_html=True)
-            
-            with col2:
-                st.markdown(display_metric_card(
-                    "Database Name",
-                    config.get("database", "N/A"),
-                    color="green"
-                ), unsafe_allow_html=True)
-            
-            with col3:
-                st.markdown(display_metric_card(
-                    "Port",
-                    str(config.get("port", 3306)),
-                    color="purple"
-                ), unsafe_allow_html=True)
-            
-            st.markdown("---")
+            if engine:
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.markdown(display_metric_card(
+                        "Database Host",
+                        config.get("host", "localhost"),
+                        color="blue"
+                    ), unsafe_allow_html=True)
+                
+                with col2:
+                    st.markdown(display_metric_card(
+                        "Database Name",
+                        config.get("database", "N/A"),
+                        color="green"
+                    ), unsafe_allow_html=True)
+                
+                with col3:
+                    st.markdown(display_metric_card(
+                        "Port",
+                        str(config.get("port", 3306)),
+                        color="purple"
+                    ), unsafe_allow_html=True)
+                
+                st.markdown("---")
             
         except Exception as e:
-            st.error(f"❌ Database connection failed: {e}")
+            # Show a cleaned error message for connection failures
+            err_str = str(e)
+            err_str_clean = err_str.split(' (Background')[0]
+            st.error(f"❌ Database connection failed: {err_str_clean}")
             engine = None
         
         if engine:
@@ -1290,10 +1360,14 @@ with tabs[3]:
                                         mime="text/csv",
                                     )
                         except Exception as e:
-                            st.error(f"❌ Query execution failed: {e}")
+                            err_str = str(e)
+                            err_str_clean = err_str.split(' (Background')[0]
+                            st.error(f"❌ Query execution failed: {err_str_clean}")
                 
             except Exception as e:
-                st.error(f"Failed to retrieve tables: {e}")
+                err_str = str(e)
+                err_str_clean = err_str.split(' (Background')[0]
+                st.error(f"Failed to retrieve tables: {err_str_clean}")
 
 # ---------------------------
 # Upload Tab
@@ -1561,35 +1635,40 @@ with tabs[6]:
         
         with col1:
             # Top performing store
-            top_store = full_df.groupby('store')['weekly_sales'].sum().idxmax()
-            top_store_sales = full_df.groupby('store')['weekly_sales'].sum().max()
-            
-            st.markdown(f"""
-            <div class="info-card">
-                <h5>🏆 Best Performing Store</h5>
-                <p style="font-size: 2em; font-weight: bold; color: #667eea;">Store #{top_store}</p>
-                <p>Total Sales: <strong>${top_store_sales:,.2f}</strong></p>
-                <p>This store accounts for {(top_store_sales/full_df['weekly_sales'].sum()*100):.1f}% of total revenue</p>
-            </div>
-            """, unsafe_allow_html=True)
+            try:
+                top_store = full_df.groupby('store')['weekly_sales'].sum().idxmax()
+                top_store_sales = full_df.groupby('store')['weekly_sales'].sum().max()
+                st.markdown(f"""
+                <div class="info-card">
+                    <h5>🏆 Best Performing Store</h5>
+                    <p style="font-size: 2em; font-weight: bold; color: #667eea;">Store #{top_store}</p>
+                    <p>Total Sales: <strong>${top_store_sales:,.2f}</strong></p>
+                    <p>This store accounts for {(top_store_sales/full_df['weekly_sales'].sum()*100):.1f}% of total revenue</p>
+                </div>
+                """, unsafe_allow_html=True)
+            except Exception:
+                st.info("Not enough data to compute top performing store.")
         
         with col2:
             # Sales trend
-            recent_sales = full_df.nlargest(1000, 'sale_date')['weekly_sales'].mean()
-            older_sales = full_df.nsmallest(1000, 'sale_date')['weekly_sales'].mean()
-            trend = ((recent_sales - older_sales) / older_sales * 100)
-            
-            trend_emoji = "📈" if trend > 0 else "📉"
-            trend_color = "#2ca02c" if trend > 0 else "#d62728"
-            
-            st.markdown(f"""
-            <div class="info-card">
-                <h5>{trend_emoji} Sales Trend</h5>
-                <p style="font-size: 2em; font-weight: bold; color: {trend_color};">{trend:+.1f}%</p>
-                <p>Recent avg: <strong>${recent_sales:,.2f}</strong></p>
-                <p>Historical avg: <strong>${older_sales:,.2f}</strong></p>
-            </div>
-            """, unsafe_allow_html=True)
+            try:
+                recent_sales = full_df.nlargest(1000, 'sale_date')['weekly_sales'].mean()
+                older_sales = full_df.nsmallest(1000, 'sale_date')['weekly_sales'].mean()
+                trend = ((recent_sales - older_sales) / older_sales * 100)
+                
+                trend_emoji = "📈" if trend > 0 else "📉"
+                trend_color = "#2ca02c" if trend > 0 else "#d62728"
+                
+                st.markdown(f"""
+                <div class="info-card">
+                    <h5>{trend_emoji} Sales Trend</h5>
+                    <p style="font-size: 2em; font-weight: bold; color: {trend_color};">{trend:+.1f}%</p>
+                    <p>Recent avg: <strong>${recent_sales:,.2f}</strong></p>
+                    <p>Historical avg: <strong>${older_sales:,.2f}</strong></p>
+                </div>
+                """, unsafe_allow_html=True)
+            except Exception:
+                st.info("Not enough data to compute trends.")
         
         st.markdown("---")
         
@@ -1599,46 +1678,58 @@ with tabs[6]:
         recommendations = []
         
         # Check for missing data
-        missing_pct = (full_df.isnull().sum().sum() / (full_df.shape[0] * full_df.shape[1])) * 100
-        if missing_pct > 5:
-            recommendations.append({
-                "priority": "High",
-                "category": "Data Quality",
-                "recommendation": f"Address missing data ({missing_pct:.1f}% of values are missing)",
-                "action": "Review data collection processes and implement imputation strategies"
-            })
+        try:
+            missing_pct = (full_df.isnull().sum().sum() / (full_df.shape[0] * full_df.shape[1])) * 100
+            if missing_pct > 5:
+                recommendations.append({
+                    "priority": "High",
+                    "category": "Data Quality",
+                    "recommendation": f"Address missing data ({missing_pct:.1f}% of values are missing)",
+                    "action": "Review data collection processes and implement imputation strategies"
+                })
+        except Exception:
+            pass
         
         # Check for low-performing stores
-        store_sales = full_df.groupby('store')['weekly_sales'].sum()
-        low_performers = store_sales[store_sales < store_sales.quantile(0.25)]
-        if len(low_performers) > 0:
-            recommendations.append({
-                "priority": "Medium",
-                "category": "Performance",
-                "recommendation": f"{len(low_performers)} stores performing below 25th percentile",
-                "action": "Investigate root causes and develop improvement plans"
-            })
+        try:
+            store_sales = full_df.groupby('store')['weekly_sales'].sum()
+            low_performers = store_sales[store_sales < store_sales.quantile(0.25)]
+            if len(low_performers) > 0:
+                recommendations.append({
+                    "priority": "Medium",
+                    "category": "Performance",
+                    "recommendation": f"{len(low_performers)} stores performing below 25th percentile",
+                    "action": "Investigate root causes and develop improvement plans"
+                })
+        except Exception:
+            pass
         
         # Check data freshness
         if 'sale_date' in full_df.columns:
-            latest_date = pd.to_datetime(full_df['sale_date']).max()
-            days_old = (datetime.now() - latest_date).days
-            if days_old > 30:
-                recommendations.append({
-                    "priority": "High",
-                    "category": "Data Freshness",
-                    "recommendation": f"Latest data is {days_old} days old",
-                    "action": "Update data sources and run ETL pipeline more frequently"
-                })
+            try:
+                latest_date = pd.to_datetime(full_df['sale_date']).max()
+                days_old = (datetime.now() - latest_date).days
+                if days_old > 30:
+                    recommendations.append({
+                        "priority": "High",
+                        "category": "Data Freshness",
+                        "recommendation": f"Latest data is {days_old} days old",
+                        "action": "Update data sources and run ETL pipeline more frequently"
+                    })
+            except Exception:
+                pass
         
         # Add positive recommendations
-        if calculate_data_quality_score(full_df) > 85:
-            recommendations.append({
-                "priority": "Info",
-                "category": "Data Quality",
-                "recommendation": "Excellent data quality maintained",
-                "action": "Continue current data management practices"
-            })
+        try:
+            if calculate_data_quality_score(full_df) > 85:
+                recommendations.append({
+                    "priority": "Info",
+                    "category": "Data Quality",
+                    "recommendation": "Excellent data quality maintained",
+                    "action": "Continue current data management practices"
+                })
+        except Exception:
+            pass
         
         # Display recommendations
         for i, rec in enumerate(recommendations, 1):
@@ -1689,9 +1780,12 @@ TOP PERFORMING STORES
                 progress.progress(30)
                 
                 # Add top stores to report
-                top_10_stores = full_df.groupby('store')['weekly_sales'].sum().sort_values(ascending=False).head(10)
-                for idx, (store, sales) in enumerate(top_10_stores.items(), 1):
-                    report_content += f"{idx}. Store #{store}: ${sales:,.2f}\n"
+                try:
+                    top_10_stores = full_df.groupby('store')['weekly_sales'].sum().sort_values(ascending=False).head(10)
+                    for idx, (store, sales) in enumerate(top_10_stores.items(), 1):
+                        report_content += f"{idx}. Store #{store}: ${sales:,.2f}\n"
+                except Exception:
+                    report_content += "Top stores: insufficient data\n"
                 
                 progress.progress(60)
                 
@@ -1791,7 +1885,7 @@ with tabs[7]:
     
     with col1:
         st.markdown("""
-        <div class="info-card">
+        <div class="info-card white-bg">
             <h4>HDFS Configuration & Usage</h4>
             <p>Hadoop Distributed File System (HDFS) is used for storing large-scale retail sales data across distributed nodes.</p>
             
@@ -2353,3 +2447,38 @@ with tabs[8]:
             holiday_name VARCHAR(100)
         );
         """, language="sql")
+
+    # ---------------------------
+    # Relationships tab content (FIXED — previously empty)
+    # ---------------------------
+    with schema_tab3:
+        st.markdown("##### 🔗 Table Relationships & Foreign Keys")
+        st.markdown("""
+        <div class="info-card white-bg">
+            <p>This panel shows the key relationships used across the data model and sample queries to join facts and dimensions.</p>
+            <ul>
+                <li><strong>sales_transactions.store_id → stores.store_id</strong></li>
+                <li><strong>sales_transactions.department_id → departments.department_id</strong></li>
+                <li><strong>sales_transactions.date_id → date_dimension.date_id</strong></li>
+                <li><strong>sales_features.store_id → stores.store_id</strong></li>
+                <li><strong>economic_indicators.date_id → date_dimension.date_id</strong></li>
+            </ul>
+            <h5>Sample join (analysis) query:</h5>
+            <pre style="background-color:#f8f9fa; padding:12px; border-radius:6px; color:#333;">
+SELECT s.store_name,
+       d.department_name,
+       dd.date,
+       t.weekly_sales
+FROM sales_transactions t
+JOIN stores s ON t.store_id = s.store_id
+JOIN departments d ON t.department_id = d.department_id
+JOIN date_dimension dd ON t.date_id = dd.date_id
+WHERE dd.year = 2025
+ORDER BY t.weekly_sales DESC
+LIMIT 100;
+            </pre>
+            <p>Use this as a template to build KPI queries and to ensure referential integrity.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# End of file
