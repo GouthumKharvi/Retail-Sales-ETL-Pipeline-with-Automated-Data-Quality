@@ -1,0 +1,269 @@
+[2025-11-18 13:30:41] ==== EXTRACT STEP STARTED ====
+[2025-11-18 13:30:48] Truncating staging tables before load (idempotent run)...
+[2025-11-18 13:30:50] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 14:09:11] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:09:12] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:09:13] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:10:36] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:10:37] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:10:38] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:14:45] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:14:46] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:14:46] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:23:47] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:23:48] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:23:48] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:40:55] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:40:57] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:40:57] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:52:32] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:52:33] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:52:34] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 14:58:39] ==== EXTRACT STEP STARTED ====
+[2025-11-18 14:58:40] Truncating staging tables before load (idempotent run)...
+[2025-11-18 14:58:40] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '9071Gk@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 15:06:49] ==== EXTRACT STEP STARTED ====
+[2025-11-18 15:06:51] Truncating staging tables before load (idempotent run)...
+[2025-11-18 15:06:52] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 15:07:16] ==== EXTRACT STEP STARTED ====
+[2025-11-18 15:07:18] Truncating staging tables before load (idempotent run)...
+[2025-11-18 15:07:20] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 15:43:08] ==== EXTRACT STEP STARTED ====
+[2025-11-18 15:43:10] Truncating staging tables before load (idempotent run)...
+[2025-11-18 15:43:11] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '1234@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 15:58:38] ==== EXTRACT STEP STARTED ====
+[2025-11-18 15:58:40] Truncating staging tables before load (idempotent run)...
+[2025-11-18 15:58:40] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '#$%#$%(18)GKKVKK(k20)@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 15:59:47] ==== EXTRACT STEP STARTED ====
+[2025-11-18 15:59:49] Truncating staging tables before load (idempotent run)...
+[2025-11-18 15:59:50] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 16:01:21] ==== EXTRACT STEP STARTED ====
+[2025-11-18 16:01:22] Truncating staging tables before load (idempotent run)...
+[2025-11-18 16:01:22] DB Load Error: (mysql.connector.errors.InterfaceError) 2003: Can't connect to MySQL server on '#$#@@9o00RT#@$%@127.0.0.1:3306' (Errno 11003: getaddrinfo failed)
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+[2025-11-18 16:04:46] ==== EXTRACT STEP STARTED ====
+[2025-11-18 16:04:48] Truncating staging tables before load (idempotent run)...
+[2025-11-18 16:04:49] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 16:05:05] ==== EXTRACT STEP STARTED ====
+[2025-11-18 16:05:07] Truncating staging tables before load (idempotent run)...
+[2025-11-18 16:05:08] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 17:57:03] ==== EXTRACT STEP STARTED ====
+[2025-11-18 17:57:05] Truncating staging tables before load (idempotent run)...
+[2025-11-18 17:57:07] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 18:00:45] ==== EXTRACT STEP STARTED ====
+[2025-11-18 18:00:46] Truncating staging tables before load (idempotent run)...
+[2025-11-18 18:00:48] DB Load Error: (mysql.connector.errors.ProgrammingError) 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+(Background on this error at: https://sqlalche.me/e/20/f405)
+[2025-11-18 18:08:11] ==== EXTRACT STEP STARTED ====
+[2025-11-18 18:08:13] Truncating staging tables before load (idempotent run)...
+[2025-11-18 18:08:14] Staging tables truncated.
+[2025-11-18 18:09:18] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-18 18:09:35] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-18 18:09:37] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-18 18:09:37] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-18 18:09:37] ==== EXTRACT STEP COMPLETED ====
+[2025-11-18 21:00:37] ==== TRANSFORM STEP STARTED ====
+[2025-11-18 21:00:43] Loading staging tables into DataFrames...
+[2025-11-18 21:00:55] Loaded sales_staging: 536634 rows
+[2025-11-18 21:00:55] Loaded features_staging: 8190 rows
+[2025-11-18 21:00:55] Loaded stores_staging: 45 rows
+[2025-11-18 21:00:55] Cleaning sales_staging...
+[2025-11-18 21:00:55] Cleaning features_staging...
+[2025-11-18 21:00:55] Cleaning stores_staging...
+[2025-11-18 21:00:55] Merging sales + features...
+[2025-11-18 21:00:55] Merging with stores table...
+[2025-11-18 21:00:56] Final merged rows: 536634
+[2025-11-18 21:00:58] Saved clean file → C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\sales_clean.csv (536634 rows)
+[2025-11-18 21:00:58] Saved clean file → C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\features_clean.csv (8190 rows)
+[2025-11-18 21:00:58] Saved clean file → C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\stores_clean.csv (45 rows)
+[2025-11-18 21:01:04] Saved clean file → C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\full_dataset_clean.csv (536634 rows)
+[2025-11-18 21:01:04] ==== TRANSFORM STEP COMPLETED ====
+[2025-11-18 21:09:07] ==== LOAD STEP STARTED ====
+[2025-11-18 21:09:10] Dropping clean tables (idempotent run)...
+[2025-11-18 21:11:44] Loaded sales_clean (536634 rows)
+[2025-11-18 21:11:44] Loaded features_clean (8190 rows)
+[2025-11-18 21:11:44] Loaded stores_clean (45 rows)
+[2025-11-18 21:11:44] Loaded fact_sales (536634 rows)
+[2025-11-18 21:11:44] ==== LOAD STEP COMPLETED ====
+[2025-11-18 21:28:39] ==== EXTRACT STEP STARTED ====
+[2025-11-18 21:28:41] Truncating staging tables before load (idempotent run)...
+[2025-11-18 21:28:43] Staging tables truncated.
+[2025-11-18 21:30:46] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-18 21:31:18] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-18 21:31:23] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-18 21:31:23] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-18 21:31:23] ==== EXTRACT STEP COMPLETED ====
+[2025-11-18 21:31:28] ==== TRANSFORM STEP STARTED ====
+[2025-11-18 21:31:30] Loading staging tables into DataFrames...
+[2025-11-18 21:32:01] Loaded sales_staging: 536634 rows
+[2025-11-18 21:32:01] Loaded features_staging: 8190 rows
+[2025-11-18 21:32:01] Loaded stores_staging: 45 rows
+[2025-11-18 21:32:01] Cleaning sales_staging...
+[2025-11-18 21:32:01] Cleaning features_staging...
+[2025-11-18 21:32:01] Cleaning stores_staging...
+[2025-11-18 21:32:01] Merging sales + features...
+[2025-11-18 21:32:01] Merging with stores table...
+[2025-11-18 21:32:02] Final merged rows: 536634
+[2025-11-18 21:44:11] ==== EXTRACT STEP STARTED ====
+[2025-11-18 21:44:13] Truncating staging tables before load (idempotent run)...
+[2025-11-18 21:44:14] Staging tables truncated.
+[2025-11-18 21:46:17] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-18 21:46:58] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-18 21:47:03] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-18 21:47:03] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-18 21:47:03] ==== EXTRACT STEP COMPLETED ====
+[2025-11-18 21:47:09] ==== TRANSFORM STEP STARTED ====
+[2025-11-18 21:47:13] Loading staging tables into DataFrames...
+[2025-11-18 21:47:26] Loaded sales_staging: 536634 rows
+[2025-11-18 21:47:26] Loaded features_staging: 8190 rows
+[2025-11-18 21:47:26] Loaded stores_staging: 45 rows
+[2025-11-18 21:47:26] Cleaning sales_staging...
+[2025-11-18 21:47:26] Cleaning features_staging...
+[2025-11-18 21:47:26] Cleaning stores_staging...
+[2025-11-18 21:47:26] Merging sales + features...
+[2025-11-18 21:47:26] Merging with stores table...
+[2025-11-18 21:47:27] Final merged rows: 421570
+[2025-11-18 21:47:28] Saved clean file → C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\sales_clean.csv (421570 rows)
+[2025-11-18 21:54:31] ==== TRANSFORM STEP STARTED ====
+[2025-11-18 21:54:31] Loading train.csv
+[2025-11-18 21:54:31] Loading features.csv
+[2025-11-18 21:54:31] Loading stores.csv
+[2025-11-18 21:54:36] Saved clean file: C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\sales_clean.csv (421570 rows)
+[2025-11-18 21:54:36] Saved clean file: C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\features_clean.csv (8190 rows)
+[2025-11-18 21:54:36] Saved clean file: C:\Users\Gouthum\Downloads\retail_sales_etl_pipeline\data\clean\stores_clean.csv (45 rows)
+[2025-11-18 22:09:08] ==== LOAD STEP STARTED ====
+[2025-11-18 22:09:11] Dropping clean tables (idempotent run)...
+[2025-11-18 22:10:49] Loaded sales_clean (421570 rows)
+[2025-11-18 22:10:49] Loaded features_clean (8190 rows)
+[2025-11-18 22:10:49] Loaded stores_clean (45 rows)
+[2025-11-18 22:10:49] Loaded fact_sales (421570 rows)
+[2025-11-18 22:10:49] ==== LOAD STEP COMPLETED ====
+[2025-11-18 22:13:01] ==== EXTRACT STEP STARTED ====
+[2025-11-18 22:13:02] Truncating staging tables before load (idempotent run)...
+[2025-11-18 22:13:04] Staging tables truncated.
+[2025-11-18 22:14:09] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-18 22:14:26] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-18 22:14:29] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-18 22:14:29] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-18 22:14:29] ==== EXTRACT STEP COMPLETED ====
+[2025-11-18 22:14:37] ==== LOAD STEP STARTED ====
+[2025-11-18 22:14:40] Dropping clean tables (idempotent run)...
+[2025-11-18 22:15:49] Loaded sales_clean (421570 rows)
+[2025-11-18 22:15:49] Loaded features_clean (8190 rows)
+[2025-11-18 22:15:49] Loaded stores_clean (45 rows)
+[2025-11-18 22:15:49] Loaded fact_sales (421570 rows)
+[2025-11-18 22:15:49] ==== LOAD STEP COMPLETED ====
+[2025-11-19 02:55:54] ==== EXTRACT STEP STARTED ====
+[2025-11-19 02:55:56] Truncating staging tables before load (idempotent run)...
+[2025-11-19 02:55:58] Staging tables truncated.
+[2025-11-19 02:57:08] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 02:57:25] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 02:57:29] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 02:57:29] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 02:57:29] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 02:59:46] ==== EXTRACT STEP STARTED ====
+[2025-11-19 02:59:48] Truncating staging tables before load (idempotent run)...
+[2025-11-19 02:59:50] Staging tables truncated.
+[2025-11-19 03:00:58] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 03:01:16] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 03:01:19] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 03:01:19] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 03:01:19] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 03:01:29] ==== LOAD STEP STARTED ====
+[2025-11-19 03:01:32] Dropping clean tables (idempotent run)...
+[2025-11-19 03:03:04] Loaded sales_clean (421570 rows)
+[2025-11-19 03:03:04] Loaded features_clean (8190 rows)
+[2025-11-19 03:03:04] Loaded stores_clean (45 rows)
+[2025-11-19 03:03:04] Loaded fact_sales (421570 rows)
+[2025-11-19 03:03:04] ==== LOAD STEP COMPLETED ====
+[2025-11-19 03:55:41] ==== EXTRACT STEP STARTED ====
+[2025-11-19 03:55:48] Truncating staging tables before load (idempotent run)...
+[2025-11-19 03:55:52] Staging tables truncated.
+[2025-11-19 03:58:05] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 03:58:40] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 03:58:46] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 03:58:46] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 03:58:46] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 03:59:05] ==== LOAD STEP STARTED ====
+[2025-11-19 03:59:12] Dropping clean tables (idempotent run)...
+[2025-11-19 04:01:50] Loaded sales_clean (421570 rows)
+[2025-11-19 04:01:50] Loaded features_clean (8190 rows)
+[2025-11-19 04:01:50] Loaded stores_clean (45 rows)
+[2025-11-19 04:01:50] Loaded fact_sales (421570 rows)
+[2025-11-19 04:01:50] ==== LOAD STEP COMPLETED ====
+[2025-11-19 04:02:04] ==== EXTRACT STEP STARTED ====
+[2025-11-19 04:02:07] Truncating staging tables before load (idempotent run)...
+[2025-11-19 04:02:11] Staging tables truncated.
+[2025-11-19 04:04:25] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 04:05:01] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 04:05:07] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 04:05:07] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 04:05:07] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 04:05:27] ==== LOAD STEP STARTED ====
+[2025-11-19 04:05:33] Dropping clean tables (idempotent run)...
+[2025-11-19 04:08:13] Loaded sales_clean (421570 rows)
+[2025-11-19 04:08:13] Loaded features_clean (8190 rows)
+[2025-11-19 04:08:13] Loaded stores_clean (45 rows)
+[2025-11-19 04:08:13] Loaded fact_sales (421570 rows)
+[2025-11-19 04:08:13] ==== LOAD STEP COMPLETED ====
+[2025-11-19 04:33:25] ==== EXTRACT STEP STARTED ====
+[2025-11-19 04:33:28] Truncating staging tables before load (idempotent run)...
+[2025-11-19 04:33:31] Staging tables truncated.
+[2025-11-19 04:35:45] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 04:36:19] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 04:36:25] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 04:36:25] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 04:36:25] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 04:36:45] ==== LOAD STEP STARTED ====
+[2025-11-19 04:36:51] Dropping clean tables (idempotent run)...
+[2025-11-19 04:39:27] Loaded sales_clean (421570 rows)
+[2025-11-19 04:39:27] Loaded features_clean (8190 rows)
+[2025-11-19 04:39:27] Loaded stores_clean (45 rows)
+[2025-11-19 04:39:27] Loaded fact_sales (421570 rows)
+[2025-11-19 04:39:27] ==== LOAD STEP COMPLETED ====
+[2025-11-19 04:50:17] ==== EXTRACT STEP STARTED ====
+[2025-11-19 04:50:21] Truncating staging tables before load (idempotent run)...
+[2025-11-19 04:50:24] Staging tables truncated.
+[2025-11-19 04:52:41] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 04:53:19] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 04:53:24] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 04:53:24] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 04:53:24] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 04:53:44] ==== LOAD STEP STARTED ====
+[2025-11-19 04:53:51] Dropping clean tables (idempotent run)...
+[2025-11-19 04:56:30] Loaded sales_clean (421570 rows)
+[2025-11-19 04:56:30] Loaded features_clean (8190 rows)
+[2025-11-19 04:56:30] Loaded stores_clean (45 rows)
+[2025-11-19 04:56:30] Loaded fact_sales (421570 rows)
+[2025-11-19 04:56:30] ==== LOAD STEP COMPLETED ====
+[2025-11-19 05:13:30] ==== EXTRACT STEP STARTED ====
+[2025-11-19 05:13:33] Truncating staging tables before load (idempotent run)...
+[2025-11-19 05:13:37] Staging tables truncated.
+[2025-11-19 05:15:48] Loaded train.csv -> sales_staging (421570 rows)
+[2025-11-19 05:16:23] Loaded test.csv -> sales_staging (115064 rows)
+[2025-11-19 05:16:29] Loaded features.csv -> features_staging (8190 rows)
+[2025-11-19 05:16:29] Loaded stores.csv -> stores_staging (45 rows)
+[2025-11-19 05:16:29] ==== EXTRACT STEP COMPLETED ====
+[2025-11-19 05:16:48] ==== LOAD STEP STARTED ====
+[2025-11-19 05:16:55] Dropping clean tables (idempotent run)...
+[2025-11-19 05:19:34] Loaded sales_clean (421570 rows)
+[2025-11-19 05:19:34] Loaded features_clean (8190 rows)
+[2025-11-19 05:19:34] Loaded stores_clean (45 rows)
+[2025-11-19 05:19:34] Loaded fact_sales (421570 rows)
+[2025-11-19 05:19:34] ==== LOAD STEP COMPLETED ====
