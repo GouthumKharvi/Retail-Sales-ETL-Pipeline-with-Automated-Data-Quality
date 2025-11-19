@@ -6,7 +6,7 @@ Run:
     cd <project_root>/streamlit
     streamlit run streamlit_app.py
 """
-
+ 
 import streamlit as st
 import os
 import json
