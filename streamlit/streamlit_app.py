@@ -1198,9 +1198,20 @@ with tabs[2]:
 # ---------------------------
 # Database Tab
 # ---------------------------
+
+# Detect Streamlit Cloud environment
+IS_CLOUD = "STREAMLIT_SERVER" in os.environ
+
 with tabs[3]:
     st.markdown("### 🗄️ Database Management")
-    
+
+    # --- Cloud Blocker (prevents MySQL error on Streamlit Cloud) ---
+    if IS_CLOUD:
+        st.error("⚠️ Database connection disabled on Streamlit Cloud")
+        st.info("Cloud apps cannot connect to local MySQL (127.0.0.1). Use a cloud database like RDS or PlanetScale.")
+        st.stop()
+
+    # --- Local-only DB logic continues below ---
     if not config:
         st.warning("⚠️ Database configuration not found. Add `config/db_config.json` to enable database features.")
         
@@ -1217,6 +1228,7 @@ with tabs[3]:
 }</pre>
         </div>
         """, unsafe_allow_html=True)
+
     else:
         engine = None
         try:
