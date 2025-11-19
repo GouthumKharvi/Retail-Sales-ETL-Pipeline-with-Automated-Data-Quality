@@ -1,7 +1,3 @@
-{
-  "user": "root",
-  "password": "gouthum9071",
-  "host": "127.0.0.1",
-  "port": 3306,
-  "database": "retail_db"
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:3b1d58299275d00e60fd3e2983c7c9dd635ad3e2f93d8a3ad6e2dbd87d63e235
+size 123
